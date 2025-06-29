@@ -10,6 +10,11 @@ export default function App() {
     const a = parseFloat(num1);
     const b = parseFloat(num2);
 
+    if (isNaN(a) || isNaN(b)) {
+      setResultado('Valores inválidos');
+      return;
+    }
+
     let res = null;
 
     switch (operacion) {
@@ -22,16 +27,23 @@ export default function App() {
       case 'multiplicacion':
         res = a * b;
         break;
+      case 'division':
+        res = b !== 0 ? a / b : 'División no permitida';
+        break;
       default:
-        res = 'Operación no permitida';
+        res = 'Operación inválida';
     }
 
     setResultado(res);
   };
 
+  // ❌ Desactivar botón si operación es división y num2 es cero
+  const deshabilitarBoton =
+    operacion === 'division' && (parseFloat(num2) === 0 || num2 === '');
+
   return (
     <div style={{ padding: '2rem', fontFamily: 'Arial' }}>
-      <h2>Calculadora</h2>
+      <h2>Calculadora con Validación</h2>
 
       <input
         type="number"
@@ -62,25 +74,25 @@ export default function App() {
 
       <button
         onClick={calcular}
-        disabled={operacion === 'division'}
+        disabled={deshabilitarBoton}
         style={{
           padding: '10px 20px',
-          backgroundColor: operacion === 'division' ? '#aaa' : '#4CAF50',
+          backgroundColor: deshabilitarBoton ? '#aaa' : '#4CAF50',
           color: 'white',
           border: 'none',
-          cursor: operacion === 'division' ? 'not-allowed' : 'pointer'
+          cursor: deshabilitarBoton ? 'not-allowed' : 'pointer'
         }}
       >
         Calcular
       </button>
 
-      {operacion === 'division' && (
+      {deshabilitarBoton && (
         <p style={{ color: 'red', marginTop: '10px' }}>
-          La operación de división está deshabilitada.
+          No se puede dividir por cero.
         </p>
       )}
 
-      {resultado !== null && (
+      {resultado !== null && !deshabilitarBoton && (
         <p style={{ marginTop: '20px' }}>
           <strong>Resultado:</strong> {resultado}
         </p>
